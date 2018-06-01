@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import ListContacts from './ListContacts';
 import * as ContactsAPI from './utils/ContactsAPI';
 import CreateContent from './CreateContact';
+import { Route } from 'react-router-dom';
 
 class App extends Component {
   state = {
     contacts: [],
-    screen: 'list',
   };
 
   componentDidMount() {
@@ -26,22 +26,33 @@ class App extends Component {
     ContactsAPI.remove(contact);
   };
 
-  // prettier-ignore
+  createContact = contact => {
+    ContactsAPI.create(contact).then(contact => {
+      this.setState(currentState => ({
+        contacts: currentState.contacts.concat([contact]),
+      }));
+    });
+  };
+
   render() {
     return (
       <div>
-        {this.state.screen === 'list' && (
-         <ListContacts
-          contacts={this.state.contacts}
-          onDeleteContact={this.removeContact}
-          onNavigate={()=>{
-            this.setState(()=>({
-              screen: 'create'
-            }))
-          }}
+        <Route
+          exact
+          path="/"
+          render={() => <ListContacts contacts={this.state.contacts} onDeleteContact={this.removeContact} />}
         />
-        )}
-        {this.state.screen === 'create' && (<CreateContent/>)}
+        <Route
+          path="/create"
+          render={({ history }) => (
+            <CreateContent
+              onCreateContact={contact => {
+                this.createContact(contact);
+                history.push('/');
+              }}
+            />
+          )}
+        />
       </div>
     );
   }
