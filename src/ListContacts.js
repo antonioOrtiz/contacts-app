@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 // prettier-ignore
 export default class ListContacts extends Component {
@@ -25,7 +26,7 @@ export default class ListContacts extends Component {
 
   render(){
     var {query} = this.state
-    var {contacts, onDeleteContact, onNavigate} = this.props
+    var {contacts, onDeleteContact} = this.props
     var showContacts = query === '' ? contacts : contacts.filter((c)=> (c.name.toLowerCase().includes(query.toLowerCase())))
     return (
       <div className="list-contacts">
@@ -37,7 +38,7 @@ export default class ListContacts extends Component {
             value={this.state.query}
             onChange={(event)=> this.updateQuery(event.target.value)}
           />
-          <a href="#create" onClick={onNavigate} className="add-contact">Add Contact</a>
+          <Link to='/create' className="add-contact">Add Contact</Link>
         </div>
 
         {showContacts.length !== contacts.length && (
@@ -48,8 +49,8 @@ export default class ListContacts extends Component {
         )}
 
         <ol className="contact-list">
-          {showContacts.map(contact => (
-            <li key={contact.id} className="contact-list-item">
+          {showContacts.map((contact, index) => (
+            <li key={index} className="contact-list-item">
               <div
                 className="contact-avatar"
                 style={{
